@@ -71,12 +71,12 @@ This project implements an intelligent Excel analysis system that combines multi
 
 5. **Download Tectonic**
    Create a `.env` file in the project root:
-   1- visit this link https://github.com/tectonic-typesetting/tectonic/releases?page=2
-   2- Under Asset download: tectonic-x86_64-pc-windows-msvc.zip
-   3- Extract it somewhere permanent like: C:\tectonic\tectonic.exe
-   4- Add that folder to your system PATH
-   5- run this command ' C:\tectonic\tectonic.exe --version ' in your terminal to check if its proprely installed in your computer
-   6- You should see something like : tectonic 0.15.0Tectonic 0.15.0
+   1. visit this link https://github.com/tectonic-typesetting/tectonic/releases?page=2
+   2. Under Asset download: tectonic-x86_64-pc-windows-msvc.zip
+   3. Extract it somewhere permanent like: C:\tectonic\tectonic.exe
+   4. Add that folder to your system PATH
+   5. run this command ' C:\tectonic\tectonic.exe --version ' in your terminal to check if its proprely installed in your computer
+   6. You should see something like : tectonic 0.15.0Tectonic 0.15.0
 
 6. **Set up environment variables Create a .env file in the project root**
    ```env
