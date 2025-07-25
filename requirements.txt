@@ -1,0 +1,7 @@
+python-dotenv
+agno
+openai
+pandas
+Spire.XLS
+requests
+pillow
