@@ -75,7 +75,7 @@ This project implements an intelligent Excel analysis system that combines multi
    2. Under Asset download: tectonic-x86_64-pc-windows-msvc.zip
    3. Extract it somewhere permanent like: C:\tectonic\tectonic.exe
    4. Add that folder to your system PATH
-   5. run this command ' C:\tectonic\tectonic.exe --version ' in your terminal to check if its proprely installed in your computer
+   5. Check the instalation by runing this command ' C:\tectonic\tectonic.exe --version ' in your terminal
    6. You should see something like : tectonic 0.15.0Tectonic 0.15.0
    ```
 
