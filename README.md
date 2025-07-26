@@ -79,11 +79,6 @@ This project implements an intelligent Excel analysis system that combines multi
    6. You should see something like : tectonic 0.15.0Tectonic 0.15.0
    ```
 
-7. **Set up environment variables Create a .env file in the project root**
-   ```env
-   OPENAI_API_KEY=your_openai_api_key_here
-   ```
-
 
 ## Dependencies
 
