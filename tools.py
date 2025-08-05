@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import re
+from pathlib import Path
 
 def execute_code() : 
     return PythonTools() 
@@ -76,7 +77,7 @@ def extract_charts_with_spire(excel_file: str, output_directory: str = "charts")
             "charts": []
         }
 
-def extract_images_from_excel(excel_filepath: str, output_directory: str = "extracted_images") -> Dict:
+def extract_images_from_excel(excel_filepath: str, output_directory: str = "images") -> Dict:
     """
     Extract embedded images from Excel file
     """
@@ -409,18 +410,48 @@ def compile_latex(tex_file_path: str):
         print("✅ PDF generated successfully.")
     except subprocess.CalledProcessError as e:
         print("❌ Error during LaTeX compilation:", e)
-        
-@tool
 
+@tool("latex_escape")
 def escape_latex(text: str) -> str:
     if not isinstance(text, str):
         text = str(text)
-    mapping = {
+    accents_mapping = {
+        'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e',
+        'à': 'a', 'á': 'a', 'â': 'a', 'ä': 'a',
+        'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u',
+        'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
+        'ò': 'o', 'ó': 'o', 'ô': 'o', 'ö': 'o',
+        'ç': 'c', 'ñ': 'n',
+        'É': 'E', 'È': 'E', 'Ê': 'E', 'Ë': 'E',
+        'À': 'A', 'Á': 'A', 'Â': 'A', 'Ä': 'A',
+        'Ù': 'U', 'Ú': 'U', 'Û': 'U', 'Ü': 'U',
+        'Ì': 'I', 'Í': 'I', 'Î': 'I', 'Ï': 'I',
+        'Ò': 'O', 'Ó': 'O', 'Ô': 'O', 'Ö': 'O',
+        'Ç': 'C', 'Ñ': 'N',
+        'N°': 'Num'
+    }
+    
+    # Replace accented characters first
+    for accent, replacement in accents_mapping.items():
+        text = text.replace(accent, replacement)
+    
+    # Then handle LaTeX special characters
+    latex_mapping = {
         '&': r'\&', '%': r'\%', '$': r'\$', '#': r'\#',
         '_': r'\_', '{': r'\{', '}': r'\}', '~': r'\textasciitilde{}',
         '^': r'\^{}', '\\': r'\textbackslash{}', '€': r'\euro{}'
     }
-    pattern = re.compile('|'.join(re.escape(k) for k in mapping))
-    return pattern.sub(lambda m: mapping[m.group()], text)
+    pattern = re.compile('|'.join(re.escape(k) for k in latex_mapping))
+    return pattern.sub(lambda m: latex_mapping[m.group()], text)
 
-tools = [excel_parser(), execute_code(), file_operations(), compile_latex, escape_latex]
+@tool(name="write_latex_file_utf8")
+def proper_write_latex(latex_code: str, file_name: str = "latex.tex") -> str:
+    try:
+        path = Path(file_name)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(latex_code)
+        return f"LaTeX code successfully written to {path.resolve()}"
+    except Exception as e:
+        return f"Error writing LaTeX file: {e}"
+
+tools = [excel_parser(), execute_code(), file_operations(), compile_latex, escape_latex, proper_write_latex]

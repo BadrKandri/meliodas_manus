@@ -2,6 +2,7 @@ python-dotenv
 agno
 openai
 pandas
-Spire.XLS
+spire.xls
 requests
 pillow
+openpyxl
