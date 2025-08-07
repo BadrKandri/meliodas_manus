@@ -6,3 +6,6 @@ spire.xls
 requests
 pillow
 openpyxl
+fpdf
+plotly
+numpy

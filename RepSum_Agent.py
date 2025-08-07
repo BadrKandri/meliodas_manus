@@ -17,9 +17,10 @@ class Summary_Report_Response(BaseModel):
     is_report: bool = Field(..., description="does the user want from a report")
 
 class AgentManager:
-    def __init__(self, model_name: str, temperature: float):
+    def __init__(self, model_name: str, temperature: float, max_tokens: int):
         self.model_name = model_name
         self.temp = temperature
+        self.max_tokens = max_tokens
 
     def create_Under_agent(self):
         tools = [excel_parser(), execute_code(), file_operations(), ReasoningTools()]
@@ -103,7 +104,7 @@ class AgentManager:
 
 try:
     
-    agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1)
+    agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=10000)
     agent1 = agent_manager.create_Under_agent()
     response1 = agent1.run(input("HELLO, i am Meliodas Manus Agent how can i help you?\n===> "))
     if response1.content.is_report:

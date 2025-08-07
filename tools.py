@@ -11,7 +11,7 @@ import re
 from pathlib import Path
 
 def execute_code() : 
-    return PythonTools() 
+    return PythonTools(base_dir=Path(r"C:\Users\MELIODAS\Desktop\meliodas_manus\scripts")) 
 
 def file_operations() : 
     return FileTools()  
