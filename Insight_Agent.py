@@ -35,12 +35,11 @@ class AgentManager:
                     ]
         )
 
-# Agent Loop:
-
-try:  
-    agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=10000)
-    agent = agent_manager.create_Insight_agent()
-    response = agent.run(input("HELLO, i am Meliodas Manus Agent how can i help you?\n===> "))
-    print(response.content)
-except ModelProviderError as e:
-    print("❌ OpenAI API quota exceeded.")
+if __name__ == "__main__":
+    try:  
+        agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=10000)
+        agent = agent_manager.create_Insight_agent()
+        response = agent.run(input("HELLO, i am Meliodas Manus Agent how can i help you?\n===> "))
+        print(response.content)
+    except ModelProviderError as e:
+        print("❌ OpenAI API quota exceeded.")

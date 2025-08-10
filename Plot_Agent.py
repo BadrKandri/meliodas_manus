@@ -4,7 +4,6 @@ from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.exceptions import ModelProviderError
 from tools import execute_code, file_operations
-from tools import execute_code, file_operations
 
 load_dotenv()
 key = os.getenv("OPENAI_API_KEY") 
@@ -31,10 +30,11 @@ class AgentManager:
             ]
         )
 
-try:  
-    agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=50000)
-    agent = agent_manager.create_Plot_Agent()
-    response = agent.run("plot the food csv inside output folder")
-    print(response.content)
-except ModelProviderError as e:
-    print("❌ OpenAI API quota exceeded.")
+if __name__ == "__main__":
+    try:  
+        agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=50000)
+        agent = agent_manager.create_Plot_Agent()
+        response = agent.run(input("HELLO, i am Meliodas Manus Agent how can i help you?\n===> "))
+        print(response.content)
+    except ModelProviderError as e:
+        print("❌ OpenAI API quota exceeded.")

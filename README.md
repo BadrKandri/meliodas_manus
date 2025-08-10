@@ -43,13 +43,9 @@
 
 
 ## Usage
-**Run this command in your terminal for Insight Agent**
+**Run this command in your terminal**
 ```bash
-python Insight_Agent.py
-```
-**Run this command in your terminal for RepSum Agent**
-```bash
-python RepSum_Agent.py
+python main.py
 ```
 
 The agent will start an interactive session where you can ask questions and request analysis.

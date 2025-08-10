@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.exceptions import ModelProviderError
-from tools import execute_code, file_operations
 from tools import execute_code, file_operations,read_file_utf8,save_file_utf8
 
 load_dotenv()
@@ -55,10 +54,11 @@ class AgentManager:
             ]
         )
 
-try:  
-    agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=50000)
-    agent = agent_manager.create_Context_Agent()
-    response = agent.run()
-    print(response.content)
-except ModelProviderError as e:
-    print("❌ OpenAI API quota exceeded.")
+if __name__ == "__main__":
+    try:  
+        agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=50000)
+        agent = agent_manager.create_Context_Agent()
+        response = agent.run()
+        print(response.content)
+    except ModelProviderError as e:
+        print("❌ OpenAI API quota exceeded.")

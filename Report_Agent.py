@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.tools.reasoning import ReasoningTools
-from tools import excel_parser, compile_latex, escape_latex, execute_code, file_operations,proper_write_latex
+from tools import compile_latex, escape_latex, execute_code, file_operations,proper_write_latex
 from agno.exceptions import ModelProviderError
 
 load_dotenv()
@@ -23,7 +23,7 @@ class AgentManager:
         self.max_tokens = max_tokens
 
     def create_Report_agent(self):
-        tools = [compile_latex, escape_latex, execute_code(), file_operations(), proper_write_latex]
+        tools = [ReasoningTools(), execute_code(), file_operations(), proper_write_latex, compile_latex, escape_latex]
         return Agent(
             name="Report_agent",
             model=OpenAIChat(self.model_name),
@@ -43,18 +43,31 @@ class AgentManager:
                 "IMPORTANT: Since the LaTeX file is created in the outputs folder and images are in the root images folder, when including images, always use the path ../images/filename.jpeg, or ../images/filename.png. And charts are in the root charts folder, so use the path ../charts/filename.jpeg, or ../charts/filename.png. IF THERE ARE NO IMAGES OR CHARTS DO NOT mention them in the report NEVER EVER",
                 "CRITICAL: always respect the report_specifications given in the JSON and Always give information about ALL THE COLUMNS in the report, even if they are not used in the analysis.",
                 "4. Call the `compile_latex('latex.tex')` tool, which takes the 'latex.tex' file as input, runs the LaTeX code, generates the PDF file, and saves it as 'report.pdf' in the 'outputs' folder.",
-                
+                r"""
+                LATEX IMPORTANT AND CRITICAL RULES:
+                -Encoding: Include \usepackage[utf8]{inputenc}, \usepackage[T1]{fontenc}, \usepackage[english]{babel}, and \usepackage{textcomp} at the start of the LaTeX code.
+                -Text Handling: Apply the escape_latex tool to all JSON text data to prevent compilation errors, use \& outside tables/math, and \texttt{} for file paths (e.g., \texttt{\textbackslash path}).
+                -Document Structure: Begin with a summary paragraph, organize content into sections per data sheet with subsections without new pages for chapters, and include metadata with \author{}, \date{}, and optionally center the title using \begin{center}...\end{center}.
+                -Formatting: Maintain consistent style, center tables with \centering and use \caption{Sample Data}, wrap images in a figure environment with formal captions (e.g., "Vibrant arrangement of design elements"), and integrate figures/tables within text flow, avoiding placement above content.
+                -Tables: Include sample data rows with clear, readable column headers, and use \resizebox{\textwidth}{!}{\begin{tabular}... \end{tabular}} for wide tables to ensure compact formatting. 
+                ✅ CRITICAL: Every use of \resizebox{\textwidth}{!}{ must end with a closing brace '}' AFTER \end{tabular}. Never forget this or LaTeX will fail with 'Undefined control sequence'.
+                -Figures: Use formal captions and avoid informal language (e.g., "will be computed" instead of "would be included").
+                -Lists: Use \begin{itemize} for bullet points instead of dashes.
+                -Text Overflow: Prevent "Overfull \hbox" warnings by wrapping long lines with \\, \begin{itemize}, or \sloppy for loose spacing.
+                -Hyperlinks: Optionally use \hypersetup{colorlinks=true, linkcolor=blue} to improve PDF link readability.
+                -Code Quality: Ensure error-free, user-specific LaTeX code tailored to the request.
+                """,
                 "IMPORTANT Do Not:"
                     "1. Do not place two different tables with different headers inside the same tabular block.",
                     "2. Do not repeat \\textbf{} headers inside an existing table."
                 ]
         )
 
-# Agent Loop:
-try:
-    agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=10000)
-    agent2 = agent_manager.create_Report_agent()
-    response2 = agent2.run("generate the report")
+if __name__ == "__main__":
+    try:
+        agent_manager = AgentManager(model_name="gpt-4o", temperature=0.1, max_tokens=10000)
+        agent = agent_manager.create_Report_agent()
+        response = agent.run(input("HELLO, i am Meliodas Manus Agent how can i help you?\n===> "))
 
-except ModelProviderError as e:
-    print("❌ OpenAI API quota exceeded.")
+    except ModelProviderError as e:
+        print("❌ OpenAI API quota exceeded.")
