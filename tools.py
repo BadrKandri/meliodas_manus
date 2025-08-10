@@ -20,8 +20,6 @@ def extract_charts_with_spire(excel_file: str, output_directory: str = "charts")
     """
     Extract charts from Excel using Spire.XLS (your working method)
     """
-    print(f"📊 Extracting charts with Spire.XLS from: {excel_file}")
-    
     try:
         from spire.xls import Workbook
         
@@ -37,9 +35,11 @@ def extract_charts_with_spire(excel_file: str, output_directory: str = "charts")
         total_charts = 0
         
         # Extract charts from each worksheet
+        chart_counter = 0
         for sheet in workbook.Worksheets:
             for i, chart in enumerate(sheet.Charts):
-                chart_filename = f"{sheet.Name}_Chart_{i+1}.png"
+                chart_counter += 1
+                chart_filename = f"chart{chart_counter}.png"
                 image_path = os.path.join(output_directory, chart_filename)
                 
                 # Save chart as image
@@ -49,7 +49,8 @@ def extract_charts_with_spire(excel_file: str, output_directory: str = "charts")
                     "filename": chart_filename,
                     "path": image_path,
                     "sheet": sheet.Name,
-                    "chart_index": i + 1
+                    "chart_index": i + 1,
+                    "global_chart_number": chart_counter
                 })
                 
                 total_charts += 1
@@ -81,8 +82,6 @@ def extract_images_from_excel(excel_filepath: str, output_directory: str = "imag
     """
     Extract embedded images from Excel file
     """
-    print(f"🖼️ Extracting images from Excel: {excel_filepath}")
-    
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
@@ -100,13 +99,16 @@ def extract_images_from_excel(excel_filepath: str, output_directory: str = "imag
             for i, filename in enumerate(os.listdir(media_path)):
                 if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
                     source_path = os.path.join(media_path, filename)
-                    output_path = os.path.join(output_directory, f"image_{i+1}_{filename}")
+                    # Extract file extension from original filename
+                    file_extension = os.path.splitext(filename)[1]
+                    new_filename = f"image{i+1}{file_extension}"
+                    output_path = os.path.join(output_directory, new_filename)
 
                     # Copy image file
                     shutil.copy(source_path, output_path)
 
                     extracted_images.append({
-                        "filename": f"image_{i+1}_{filename}",
+                        "filename": new_filename,
                         "path": output_path,
                         "original_name": filename
                     })
@@ -177,7 +179,6 @@ class ExcelParserTool(Toolkit) :
                 print(f"✅ Loaded sheet: {sheet_name} - {df.shape[0]} rows × {df.shape[1]} cols")
 
             results["success"] = True
-            print("✅ Excel parsing completed successfully!")
 
         except Exception as e:
             results["errors"].append(str(e))
@@ -187,7 +188,6 @@ class ExcelParserTool(Toolkit) :
                 
     def analyze_extracted_image_content(self, image_path: str) -> Dict:
         """Analyze image content using direct OpenAI API call"""
-        print(f"👁️ Analyzing image content: {image_path}")
 
         try:
             import base64
@@ -243,8 +243,6 @@ class ExcelParserTool(Toolkit) :
                 result = response.json()
                 description = result['choices'][0]['message']['content']
                 
-                print(f"✅ Image analysis completed successfully")
-                
                 return {
                     "image_path": image_path,
                     "analysis_success": True,
@@ -275,8 +273,6 @@ class ExcelParserTool(Toolkit) :
 
     def extract_and_analyze_charts(self, file_path: str) -> Dict:
         """Extract charts using Spire.XLS and analyze them with vision AI"""
-        print(f"📊🔍 Extracting and analyzing charts from: {file_path}")
-        
         # Step 1: Extract charts using your working Spire method
         extraction_result = extract_charts_with_spire(file_path)
         
@@ -299,7 +295,6 @@ class ExcelParserTool(Toolkit) :
         chart_analyses = []
         
         for chart_info in extraction_result["charts"]:
-            print(f"🔍 Analyzing chart: {chart_info['filename']}")
             
             analysis = self.analyze_extracted_image_content(chart_info["path"])
             
@@ -313,7 +308,6 @@ class ExcelParserTool(Toolkit) :
                     "file_size": f"{os.path.getsize(chart_info['path'])} bytes",
                     "extraction_method": "spire_xls"
                 })
-                print(f"✅ Successfully analyzed: {chart_info['filename']}")
             else:
                 chart_analyses.append({
                     "chart_file": chart_info["filename"],
@@ -338,7 +332,6 @@ class ExcelParserTool(Toolkit) :
 
     def extract_and_analyze_images(self, file_path: str) -> Dict:
         """Extract embedded images from Excel and analyze them with vision AI"""
-        print(f"🖼️🔍 Extracting and analyzing images from: {file_path}")
         
         # Step 1: Extract images from Excel
         extraction_result = extract_images_from_excel(file_path)
@@ -362,8 +355,6 @@ class ExcelParserTool(Toolkit) :
         image_analyses = []
         
         for image_info in extraction_result["images"]:
-            print(f"🔍 Analyzing image: {image_info['filename']}")
-            
             analysis = self.analyze_extracted_image_content(image_info["path"])
             
             if analysis.get("analysis_success"):
@@ -375,7 +366,6 @@ class ExcelParserTool(Toolkit) :
                     "file_size": f"{os.path.getsize(image_info['path'])} bytes",
                     "extraction_method": "zip_extraction"
                 })
-                print(f"✅ Successfully analyzed: {image_info['filename']}")
             else:
                 image_analyses.append({
                     "image_file": image_info["filename"],
@@ -400,6 +390,26 @@ class ExcelParserTool(Toolkit) :
 def excel_parser() : 
     return ExcelParserTool()
 
+@tool(show_result=True)
+def read_file_utf8(file_name: str) -> str:
+    try:
+        with open(REPO_PATH / file_name, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        return f"Error reading file {file_name}: {e}"
+    
+
+@tool(show_result=True)
+def save_file_utf8(file_name: str, contents: str, overwrite: bool = True) -> str:
+    try:
+        file_path = REPO_PATH / file_name
+        if file_path.exists() and not overwrite:
+            return f"File {file_name} already exists and overwrite is False."
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(contents)
+        return f"Successfully saved to {file_name}"
+    except Exception as e:
+        return f"Error saving file {file_name}: {e}"
 
 
 
@@ -454,4 +464,8 @@ def proper_write_latex(latex_code: str, file_name: str = "latex.tex") -> str:
     except Exception as e:
         return f"Error writing LaTeX file: {e}"
 
+        
 tools = [excel_parser(), execute_code(), file_operations(), compile_latex, escape_latex, proper_write_latex]
+REPO_PATH = Path(r"C:\Users\MELIODAS\Desktop\meliodas_manus")
+
+#Rag Tools

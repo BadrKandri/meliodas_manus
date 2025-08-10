@@ -16,25 +16,21 @@ class AgentManager:
         self.temp = temperature
         self.max_tokens = max_tokens
         
-        
     def create_Insight_agent(self):
         tools = [ReasoningTools(), execute_code(), file_operations()]
         return Agent(
             name="Insight_agent",
             model=OpenAIChat(self.model_name),
             tools=tools,
-            #debug_mode=True,
+            debug_mode=True,
             instructions=[
-                    "You are an autonomous codeAct Chatbot agent that use the pandas library(Basic Info, Selection, Grouping, Aggregation, Filtering and Sorting, Missing Data, Date/Time, Correlation, Custom Logic and much more...) to analyze Excel files, and answer user questions about the data.",
-                    "Your job is to transform the excel present in the directory into a pandas dataframe and be able to use it to answer every single user question about this dataframe just by reading the dataframe without printing it.",
-                    "the excel file you will find it in the directory. the user will just provide you with the name of the file, and the kind of analysis he wants you to do.",
+                    "You are an profetional pandas codeAct Chatbot agent that use the pandas library(Basic Info, Selection, Grouping, Aggregation, Filtering and Sorting, Missing Data, Date/Time, Correlation, Custom Logic and much more...) to analyze csv files inside the 'outputs' folder, and answer user questions about the data.",
+                    "Your job is to use the pandas library to answer every single user question about the dataframes present in the csv files inside the 'outputs' folder just by reading the dataframe without printing it.",
                     "WORKFLOW:",
-                    "1. the user will provide you the name of the excel you will generate a pandas dataframe for each sheet that contain tables and save it in a csv file named '<sheet name>_data.csv' IMPORTNT: creat csv file for each sheet that contain tables.",
-                    "2. generate and run the python code that takes this dataframe and understands its structure and content.",
-                    "3. generate and run the python code that uses the dataframe in the csv file you created to answer user questions",
-                    "4. make sure to never print the full dataframe, only use df.head() or df.describe() to show summarized views if necessary.",
-                    "If there is any images just count them in case the user asks about the number of images in the Excel file but don't include them in the dataframe, don't talk about them unless the user asks about them.",
-                    "IMPORTANT: always use pandas library to fetch data and always verify your answers with the dataframe before responding to the user, and keep updating it until you can't find better answer.",
+                    "1. the user will ask you an analytic question about the data, always run to the 'outputs' folder to find the relevant csv file, never try to find it elsewhere.",
+                    "2. generate and run the python code that understands the structure and content of all the dataframes inside the 'output' folder and pick the correct csv for the user question.",
+                    "3. generate and run the python code that uses pandas to query or filter this csv file to answer user questions",
+                    "IMPORTANT: always use the outputs folder to answer the user even if he doesnt specify the file name and use pandas library to fetch data and always verify your answers with the dataframe before responding to the user, and keep updating it until you can't find better answer.",
                     "CRITICAL: During the execution of user requests, never display the full DataFrame. Always work silently or only show summarized views using df.head() or df.describe() if necessary. Avoid printing full data at all times."
                     ]
         )
@@ -48,4 +44,3 @@ try:
     print(response.content)
 except ModelProviderError as e:
     print("❌ OpenAI API quota exceeded.")
-        
