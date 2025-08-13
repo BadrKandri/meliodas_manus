@@ -1,4 +1,4 @@
-import os
+import os,glob
 from dotenv import load_dotenv
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -8,7 +8,9 @@ from tools import execute_code, file_operations
 load_dotenv()
 key = os.getenv("OPENAI_API_KEY") 
 os.environ["OPENAI_API_KEY"] = key 
-        
+
+csv_files = glob.glob(os.path.join("outputs", "*.csv"))
+
 class AgentManager:
     def __init__(self, model_name: str, temperature: float, max_tokens: int):
         self.model_name = model_name
@@ -24,7 +26,7 @@ class AgentManager:
             #debug_mode=True,
             instructions=[
                 "Your are a profetional plotly expert Agent",
-                "Your Job is to create and customize plots using the Plotly library based on csv files present inside the 'outputs' folder.",
+                f"Your Job is to create and customize plots using the Plotly library based on csv files that you find inside the {csv_files}.",
                 "the user will ask you to create a plot based on the data in a specific csv file, you use the Plotly library to generate the plot.",
                 "you generate the plot as an image and you save it in the output folder."
             ]

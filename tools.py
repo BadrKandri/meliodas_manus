@@ -463,8 +463,17 @@ def proper_write_latex(latex_code: str, file_name: str = "latex.tex") -> str:
         return f"LaTeX code successfully written to {path.resolve()}"
     except Exception as e:
         return f"Error writing LaTeX file: {e}"
-
-        
+    
+@tool(name="image_exist_verification")
+def image_verif():
+    is_image = lambda: any(f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg")) for f in os.listdir("outputs"))
+    return is_image
+     
+@tool(name="pdf_exist_verification")
+def pdf_verif():
+    is_pdf = lambda: any(f.lower().endswith(".pdf") for f in os.listdir("outputs"))
+    return is_pdf     
+       
 tools = [excel_parser(), execute_code(), file_operations(), compile_latex, escape_latex, proper_write_latex]
 REPO_PATH = Path(r"C:\Users\MELIODAS\Desktop\meliodas_manus")
 

@@ -22,7 +22,7 @@ class AgentManager:
             name="Insight_agent",
             model=OpenAIChat(self.model_name),
             tools=tools,
-            debug_mode=True,
+            #debug_mode=True,
             instructions=[
                     "You are an profetional pandas codeAct Chatbot agent that use the pandas library(Basic Info, Selection, Grouping, Aggregation, Filtering and Sorting, Missing Data, Date/Time, Correlation, Custom Logic and much more...) to analyze csv files inside the 'outputs' folder, and answer user questions about the data.",
                     "Your job is to use the pandas library to answer every single user question about the dataframes present in the csv files inside the 'outputs' folder just by reading the dataframe without printing it.",

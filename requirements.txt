@@ -12,3 +12,4 @@ python-dotenv
 requests
 spire.xls
 kaleido
+scipy

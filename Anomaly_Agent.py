@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
 from agno.exceptions import ModelProviderError
-from tools import execute_code, file_operations,save_file_utf8
+from tools import execute_code, file_operations,save_file_utf8, read_file_utf8
 
 load_dotenv()
 key = os.getenv("OPENAI_API_KEY") 
@@ -16,7 +16,7 @@ class AgentManager:
         self.max_tokens = max_tokens
 
     def create_Anomaly_Agent(self):
-        tools = [execute_code(), file_operations(), save_file_utf8]
+        tools = [execute_code(), file_operations(), save_file_utf8, read_file_utf8]
         return Agent(
             name="Anomaly_Agent",
             model=OpenAIChat(self.model_name),
