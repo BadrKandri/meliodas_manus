@@ -15,7 +15,7 @@ class AgentManager:
         self.temp = temperature
         self.max_tokens = max_tokens
 
-    def Planner_Agent(self, query):
+    def Planner_Agent(self, query, excel_path):
         tools = [execute_code(), file_operations(), save_file_utf8, read_file_utf8]
         return Agent(
             name="Planner_Agent",
@@ -28,25 +28,27 @@ class AgentManager:
                 "the user will some times ask for a simple task that needs one agent but some times he will ask for a task that needs multiple agent calls",
                 "you will find all the data you will need in a folder named 'outputs' in the same directory it contain: the data frames in csv format, and a 'context.json' file that has all the relevant information about the excel file present in the 'excels' folder,so never add the extracting step in the todo list",
                 "this is the structure of the project:",
-                "project_root/"
-                "│"
-                "├── excels/"
-                "│   ├── .gitkeep"
-                "│   └── <the excel file name>.xlsx"
-                "│"
-                "├── outputs/"
-                "│   ├── .gitkeep"
-                "│   ├── anomalies.json"
-                "│   ├── context.json"
-                "│   ├── <the csv of the tablea from the excel file>.csv"
-                "│   └── media.json"
-
+                "project_root/",
+                "│",
+                "├── excels/",
+                "│   ├── .gitkeep",
+                "│   └── <the excel file name>.xlsx",
+                "│",
+                "├── outputs/",
+                "│   ├── .gitkeep",
+                "│   ├── anomalies.json",
+                "│   ├── context.json",
+                "│   ├── <the csv of the tablea from the excel file>.csv",
+                "│   └── media.json",
+                
                 "WORKFLOW:",
                 "1. concider yourself as a CEO that got an offer and he needs to devide the work between his employes, use this mentality to analyze and understand the user query",
                 "2. separate the work depending on the agents you have and create a todo list and add it to the 'todo.md' file and store it in the 'outputs' folder",
-                "3. always add the location of the task output if the next task will need that output( exemple: [  ] 3. add the image generated in the task number 2 'it is in the outputs folder' to the report)",
-                "IMPORTANT: You should call 1 and only 1 agent in each step",
-                "3. ALWAY RESPECT THIS SYNTAX IN THE TODO LIST :[  ] 1. call the x agent and ask it to do xxx using the data from the available xxx.file_type files in the 'outputs' folder",
+                "3. always add the location of the task output if the next task will need that output( exemple: [  ] 3. call the report agent and don't forget to add the image generated in the task number 2 'it is in the outputs folder' to the report)",
+                "IMPORTANT: You should obligatorily call 1 and only 1 agent at the minimum in each step AND ALWAYS MINIMISE THE TASKS 3 TASKS MAX",
+                "3. ALWAY RESPECT THIS SYNTAX IN THE TODO LIST :[  ] 1. call the x agent and ask it to do xxx using the data from the available xxx.file_type files in the 'outputs' folder and store the result in the 'outputs' folder",
+                "RESPECT THIS: Never call the insight agent to perform something that you can do directly by calling an other agent"
+                
             ]
         )
 

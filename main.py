@@ -5,13 +5,15 @@ from Planner_Agent import AgentManager as PlannerManager
 from Reviewer_Agent import AgentManager as ReviewerManager
 from Orchestrator import orchestrator
 from agno.exceptions import ModelProviderError
+from pathlib import Path
 
 query=input("HELLO, i am Meliodas Manus Agent how can i help you?\n===> ")
 
+excel_path = Path("excels/*.xlsx")
 data_extractor_agent = DataExtractorManager("gpt-4o", 0.1, 50000).Data_Extractor_Agent()
 anomaly_agent = AnomalyManager("gpt-4o", 0.1, 50000).create_Anomaly_Agent()
 context_agent = ContextManager("gpt-4o", 0.1, 50000).create_Context_Agent()
-planner_agent = PlannerManager("gpt-4o", 0.1, 50000).Planner_Agent(query)
+planner_agent = PlannerManager("gpt-4o", 0.1, 50000).Planner_Agent(query, excel_path)
 
 
 try:
@@ -27,10 +29,19 @@ except ModelProviderError as e:
 planner_response = planner_agent.run(query)
 print("planner answer:", planner_response.content)
 
-while True:
-    decision, is_done, agents_output, task = orchestrator(query)
+is_done = False
+iteration = 0
+while iteration < 5:
     if is_done == True:
         print("All tasks are done successfully!")
         break
-    reviewer_agent = ReviewerManager("gpt-4o", 0.1, 50000).Review_Agent(agents_output, decision, task)
-    review= reviewer_agent.run()
+    else:
+        iteration += 1
+        print(f"Iteration {iteration} of 5")
+        print("the orchestrator is working now")
+        decision, agents_output, task = orchestrator(query)
+        print("lets check if the task is done or not")
+        reviewer_agent = ReviewerManager("gpt-4o", 0.1, 50000).Review_Agent(agents_output, decision, task)
+        reviewer_response = reviewer_agent.run()
+        is_done = bool(reviewer_response.content.is_done)
+        print(f"Task completion status: {is_done}")

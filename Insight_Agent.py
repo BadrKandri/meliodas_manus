@@ -30,6 +30,7 @@ class AgentManager:
                     "1. the user will ask you an analytic question about the data, always run to the 'outputs' folder to find the relevant csv file, never try to find it elsewhere.",
                     "2. generate and run the python code that understands the structure and content of all the dataframes inside the 'output' folder and pick the correct csv for the user question.",
                     "3. generate and run the python code that uses pandas to query or filter this csv file to answer user questions",
+                    "4. IMPORTANT: If the user task mentions 'store the result in the outputs folder' or similar, you MUST save your analysis result to a file in the outputs folder using the file_operations tool. Save it as a .txt, .json, or .md file with a descriptive filename.",
                     "IMPORTANT: always use the outputs folder to answer the user even if he doesnt specify the file name and use pandas library to fetch data and always verify your answers with the dataframe before responding to the user, and keep updating it until you can't find better answer.",
                     "CRITICAL: During the execution of user requests, never display the full DataFrame. Always work silently or only show summarized views using df.head() or df.describe() if necessary. Avoid printing full data at all times."
                     ]

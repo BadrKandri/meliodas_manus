@@ -466,15 +466,42 @@ def proper_write_latex(latex_code: str, file_name: str = "latex.tex") -> str:
     
 @tool(name="image_exist_verification")
 def image_verif():
-    is_image = lambda: any(f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg")) for f in os.listdir("outputs"))
-    return is_image
+    """Check if any image file exists in both outputs and images folders"""
+    try:
+        outputs_has_images = any(f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg")) 
+                                for f in os.listdir("outputs"))
+        return outputs_has_images
+    except FileNotFoundError:
+        return False
      
 @tool(name="pdf_exist_verification")
 def pdf_verif():
-    is_pdf = lambda: any(f.lower().endswith(".pdf") for f in os.listdir("outputs"))
-    return is_pdf     
-       
-tools = [excel_parser(), execute_code(), file_operations(), compile_latex, escape_latex, proper_write_latex]
+    """Check if any PDF file exists in the outputs folder"""
+    try:
+        return any(f.lower().endswith(".pdf") for f in os.listdir("outputs"))
+    except FileNotFoundError:
+        return False     
+
+@tool(name="report_exist_verification")
+def report_verif_2():
+    """Check if report.pdf specifically exists in the outputs folder"""
+    try:
+        return os.path.isfile(os.path.join("outputs", "report.pdf"))
+    except Exception:
+        return False
+
+@tool(name="insight_result_verification")
+def insight_verif():
+    """Check if insight agent has saved results in the outputs folder"""
+    try:
+        # Check for common insight result file extensions
+        insight_files = [f for f in os.listdir("outputs") if f.lower().endswith(('.txt', '.json', '.md', '.csv')) 
+                        and f not in ['todo.md', 'data_data.csv', 'context.json', 'media.json', 'anomalies.json', '.gitkeep']]
+        return len(insight_files) > 0
+    except FileNotFoundError:
+        return False
+
+
 REPO_PATH = Path(r"C:\Users\MELIODAS\Desktop\meliodas_manus")
 
 #Rag Tools
